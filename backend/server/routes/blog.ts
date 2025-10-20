@@ -21,7 +21,7 @@ const upload = multer({ storage });
 blogRouter.post("/", upload.single("image"), async (req, res) => {
   try {
     const { title = "", author = "", content = "" } = req.body;
-    const image = req.file ? `server/uploads/${req.file.filename}` : null;
+    const image = req.file ? `/uploads/${req.file.filename}` : null;
 
     if (!title || !author || !content) {
       return res.status(400).json({ error: "All fields are required." });

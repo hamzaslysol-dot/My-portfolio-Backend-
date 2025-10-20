@@ -4,6 +4,7 @@ import path from "path";
 import { raw as db } from "./db.ts";
 import { blogRouter } from "./routes/blog.ts";
 import { authRouter } from "./routes/auth.ts";
+
 const app = express();
 
 // ✅ MySQL connection test
@@ -17,15 +18,16 @@ const app = express();
 })();
 
 // ✅ Middleware
-app.use(cors());
+app.use(cors({ origin: "http://localhost:5173" })); // allow your frontend
 app.use(express.json());
-app.use("server/uploads", express.static(path.join(process.cwd(), "uploads")));
 
-// ✅ Public blog routes
+// ✅ Serve uploaded images
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+
+// ✅ Routes
 app.use("/api/blogs", blogRouter);
-
-// ✅ Auth routes
 app.use("/api/auth", authRouter);
+
 app.get("/", (_, res) => {
   res.send("🚀 Blog API running...");
 });
