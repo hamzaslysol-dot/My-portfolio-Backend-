@@ -1,0 +1,22 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "composite": true,
+        "module": "ESNext",
+        "moduleResolution": "Node",
+        "allowSyntheticDefaultImports": true,
+        "types": [
+            "node",
+            "express"
+        ],
+        "noEmit": false,
+        "outDir": "./dist"
+    },
+    "include": [
+        "src/**/*.ts",
+        "tsconfig.node.json"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}
