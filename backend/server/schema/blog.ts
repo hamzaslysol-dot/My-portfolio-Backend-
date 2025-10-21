@@ -8,9 +8,9 @@ import {
 
 export const blogs = mysqlTable("blogs", {
   id: serial("id").primaryKey(),
-  author: varchar("author", { length: 255 }).notNull(),
   title: varchar("title", { length: 255 }).notNull(),
-  image: varchar("image", { length: 500 }),
+  author: varchar("author", { length: 100 }).notNull(),
   content: text("content").notNull(),
+  image: varchar("image", { length: 255 }),
   createdAt: timestamp("created_at").defaultNow(),
 });
