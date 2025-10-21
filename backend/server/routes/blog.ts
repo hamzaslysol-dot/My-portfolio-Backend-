@@ -1,12 +1,29 @@
 // backend/server/routes/blog.ts
 import express from "express";
+import multer from "multer";
+import path from "path";
+import fs from "fs";
 import { db } from "../db.ts";
 import { eq } from "drizzle-orm";
-import { blogs } from "../schema/blog.ts"; // adjust path if needed
+import { blogs } from "../schema/blog.ts";
 
 const blogRouter = express.Router();
 
-// 🧩 Get all blogs
+// -------------------- Multer config for file uploads --------------------
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadPath = path.join(__dirname, "../../uploads");
+    fs.mkdirSync(uploadPath, { recursive: true });
+    cb(null, uploadPath);
+  },
+  filename: (req, file, cb) => {
+    const uniqueName = Date.now() + "-" + file.originalname;
+    cb(null, uniqueName);
+  },
+});
+const upload = multer({ storage });
+
+// -------------------- Get all blogs --------------------
 blogRouter.get("/", async (req, res) => {
   try {
     const allBlogs = await db.select().from(blogs);
@@ -17,7 +34,7 @@ blogRouter.get("/", async (req, res) => {
   }
 });
 
-// 🧩 Get a single blog by ID
+// -------------------- Get a single blog --------------------
 blogRouter.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -25,9 +42,8 @@ blogRouter.get("/:id", async (req, res) => {
       .select()
       .from(blogs)
       .where(eq(blogs.id, Number(id)));
-    if (!blog.length) {
+    if (!blog.length)
       return res.status(404).json({ message: "Blog not found" });
-    }
     res.json(blog[0]);
   } catch (err) {
     console.error("❌ Error fetching blog:", err);
@@ -35,44 +51,48 @@ blogRouter.get("/:id", async (req, res) => {
   }
 });
 
-// 🧩 Create a new blog
-blogRouter.post("/", async (req, res) => {
+// -------------------- Create a new blog --------------------
+blogRouter.post("/", upload.single("image"), async (req, res) => {
   try {
-    const { title, content, image, author } = req.body;
-
+    const { title, content, author } = req.body;
     if (!title || !content || !author) {
       return res
         .status(400)
         .json({ message: "Title, content, and author are required" });
     }
 
+    const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
+
     await db.insert(blogs).values({
       title,
       content,
-      image,
-      author, // ✅ Add this line
+      author,
+      image: imageUrl,
     });
 
-    res.status(201).json({ message: "Blog created successfully" });
+    res.status(201).json({ message: "Blog created successfully", imageUrl });
   } catch (err) {
     console.error("❌ Error creating blog:", err);
     res.status(500).json({ message: "Internal server error" });
   }
 });
 
-// 🧩 Update blog
-blogRouter.put("/:id", async (req, res) => {
+// -------------------- Update blog --------------------
+blogRouter.put("/:id", upload.single("image"), async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, content, image } = req.body;
+    const { title, content, author } = req.body;
+
+    const updateData: any = { title, content, author };
+    if (req.file) updateData.image = `/uploads/${req.file.filename}`;
+
     const result = await db
       .update(blogs)
-      .set({ title, content, image })
+      .set(updateData)
       .where(eq(blogs.id, Number(id)));
 
-    if (result[0]?.affectedRows === 0) {
+    if (!result[0]?.affectedRows)
       return res.status(404).json({ message: "Blog not found" });
-    }
 
     res.json({ message: "Blog updated successfully" });
   } catch (err) {
@@ -81,17 +101,14 @@ blogRouter.put("/:id", async (req, res) => {
   }
 });
 
-// 🧩 Delete blog
+// -------------------- Delete blog --------------------
 blogRouter.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-
     const result = await db.delete(blogs).where(eq(blogs.id, Number(id)));
 
-    // Some drivers (like mysql2) return an array
-    if (result[0]?.affectedRows === 0) {
+    if (!result[0]?.affectedRows)
       return res.status(404).json({ message: "Blog not found" });
-    }
 
     res.json({ message: "Blog deleted successfully" });
   } catch (err) {
@@ -99,4 +116,5 @@ blogRouter.delete("/:id", async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
+
 export default blogRouter;

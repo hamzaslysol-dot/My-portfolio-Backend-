@@ -24,8 +24,8 @@ const app = express();
 app.use(cors({ origin: "http://localhost:5173" })); // allow your frontend
 app.use(express.json());
 
-// Serve uploaded images
-app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+// in your main server file, e.g., index.ts
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 // -------------------- Routes --------------------
 app.use("/api/blogs", blogRouter);
