@@ -1,0 +1,1 @@
+ALTER TABLE `users` MODIFY COLUMN `picture` varchar(255);

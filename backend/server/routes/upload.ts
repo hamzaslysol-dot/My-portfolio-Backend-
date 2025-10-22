@@ -1,15 +1,21 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import multer from "multer";
 import path from "path";
+import fs from "fs";
 
-const uploadRouter = express.Router();
+const router = express.Router();
 
-// ✅ Configure multer storage
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, path.join(process.cwd(), "profiles"));
+// ------------------- Blog Images -------------------
+const uploadsDir = path.join(__dirname, "../uploads");
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
+const blogStorage = multer.diskStorage({
+  destination: (_req, _file, cb) => {
+    cb(null, uploadsDir);
   },
-  filename: (req, file, cb) => {
+  filename: (_req, file, cb) => {
     const uniqueName =
       Date.now() +
       "-" +
@@ -18,21 +24,51 @@ const storage = multer.diskStorage({
     cb(null, uniqueName);
   },
 });
+const uploadBlog = multer({ storage: blogStorage });
 
-const upload = multer({ storage });
-
-// ✅ Upload route
-uploadRouter.post(
-  "/",
-  upload.single("image"),
-  (req: Request, res: Response) => {
-    if (!req.file) {
-      return res.status(400).json({ message: "No file uploaded" });
-    }
-
-    const fileUrl = `http://localhost:8000/profiles/${req.file.filename}`;
-    return res.status(200).json({ url: fileUrl });
+// Route: Upload blog image
+router.post("/blog", uploadBlog.single("image"), (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: "No file uploaded" });
+    const imageUrl = `http://localhost:8000/uploads/${req.file.filename}`;
+    res.json({ url: imageUrl });
+  } catch (error) {
+    console.error("❌ Blog upload error:", error);
+    res.status(500).json({ error: "Failed to upload blog image" });
   }
-);
+});
 
-export default uploadRouter;
+// ------------------- Profile Images -------------------
+const profilesDir = path.join(__dirname, "../profiles");
+if (!fs.existsSync(profilesDir)) {
+  fs.mkdirSync(profilesDir, { recursive: true });
+}
+
+const profileStorage = multer.diskStorage({
+  destination: (_req, _file, cb) => {
+    cb(null, profilesDir);
+  },
+  filename: (_req, file, cb) => {
+    const uniqueName =
+      Date.now() +
+      "-" +
+      Math.round(Math.random() * 1e9) +
+      path.extname(file.originalname);
+    cb(null, uniqueName);
+  },
+});
+const uploadProfile = multer({ storage: profileStorage });
+
+// Route: Upload profile image
+router.post("/profile", uploadProfile.single("image"), (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: "No file uploaded" });
+    const imageUrl = `http://localhost:8000/profiles/${req.file.filename}`;
+    res.json({ url: imageUrl });
+  } catch (error) {
+    console.error("❌ Profile upload error:", error);
+    res.status(500).json({ error: "Failed to upload profile image" });
+  }
+});
+
+export default router;
