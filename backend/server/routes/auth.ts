@@ -1,9 +1,9 @@
 import express from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { db } from "../db.ts";
-import { users } from "../schema/users.ts";
+import { db } from "../db";
 import { eq } from "drizzle-orm";
+import { users } from "../drizzle/schema";
 
 const router = express.Router();
 

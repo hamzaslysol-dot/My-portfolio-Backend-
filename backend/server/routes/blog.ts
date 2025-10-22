@@ -3,9 +3,9 @@ import express from "express";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
-import { db } from "../db.ts";
+import { db } from "../db";
 import { eq } from "drizzle-orm";
-import { blogs } from "../schema/blog.ts";
+import { blogs } from "../schema/blog";
 
 const blogRouter = express.Router();
 
