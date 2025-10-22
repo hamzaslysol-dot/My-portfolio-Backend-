@@ -16,6 +16,7 @@ dist-ssr/
 # Environment and upload data
 .env
 /uploads/
+/profiles/
 
 # Editor and system files
 .vscode/*
