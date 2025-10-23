@@ -24,10 +24,10 @@ app.use(express.urlencoded({ extended: true }));
 
 // -------------------- Static file serving --------------------
 // Blog images
-app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 // Profile images
-app.use("/profiles", express.static(path.join(process.cwd(), "profiles")));
+app.use("/profiles", express.static(path.join(__dirname, "../profiles")));
 
 // -------------------- Routes --------------------
 app.use("/api/blogs", blogRouter);

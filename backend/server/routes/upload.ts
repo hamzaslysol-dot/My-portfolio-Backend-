@@ -5,12 +5,16 @@ import fs from "fs";
 
 const router = express.Router();
 
-// ------------------- Blog Images -------------------
+// -------------------- Blog Images --------------------
+// Set uploadsDir to backend/server/uploads
 const uploadsDir = path.join(__dirname, "../uploads");
+
+// Ensure uploads folder exists
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
+// Multer storage for blogs
 const blogStorage = multer.diskStorage({
   destination: (_req, _file, cb) => {
     cb(null, uploadsDir);
@@ -24,9 +28,10 @@ const blogStorage = multer.diskStorage({
     cb(null, uniqueName);
   },
 });
+
 const uploadBlog = multer({ storage: blogStorage });
 
-// Route: Upload blog image
+// Blog upload route
 router.post("/blog", uploadBlog.single("image"), (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: "No file uploaded" });
@@ -38,12 +43,15 @@ router.post("/blog", uploadBlog.single("image"), (req, res) => {
   }
 });
 
-// ------------------- Profile Images -------------------
+// -------------------- Profile Images --------------------
 const profilesDir = path.join(__dirname, "../profiles");
+
+// Ensure profiles folder exists
 if (!fs.existsSync(profilesDir)) {
   fs.mkdirSync(profilesDir, { recursive: true });
 }
 
+// Multer storage for profiles
 const profileStorage = multer.diskStorage({
   destination: (_req, _file, cb) => {
     cb(null, profilesDir);
@@ -57,9 +65,10 @@ const profileStorage = multer.diskStorage({
     cb(null, uniqueName);
   },
 });
+
 const uploadProfile = multer({ storage: profileStorage });
 
-// Route: Upload profile image
+// Profile upload route
 router.post("/profile", uploadProfile.single("image"), (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: "No file uploaded" });
@@ -70,5 +79,9 @@ router.post("/profile", uploadProfile.single("image"), (req, res) => {
     res.status(500).json({ error: "Failed to upload profile image" });
   }
 });
+
+// -------------------- Serve static folders for frontend --------------------
+router.use("/uploads", express.static(uploadsDir));
+router.use("/profiles", express.static(profilesDir));
 
 export default router;
