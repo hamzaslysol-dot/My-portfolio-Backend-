@@ -1,8 +1,8 @@
 import { defineConfig } from "drizzle-kit";
 
 export default defineConfig({
-  schema: "./drizzle/schema.ts",
-  out: "./drizzle/migrations",
+  schema: "./db/schema.ts", // ✅ correct relative path
+  out: "./drizzle/migrations", // ✅ output migrations folder
   dialect: "mysql",
   dbCredentials: {
     host: process.env.DB_HOST || "localhost",

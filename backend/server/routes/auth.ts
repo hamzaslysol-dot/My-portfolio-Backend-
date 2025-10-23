@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { db } from "../db";
 import { eq } from "drizzle-orm";
-import { users } from "../drizzle/schema";
+import { users } from "../db/schema";
 
 const router = express.Router();
 

@@ -14,3 +14,10 @@ export const users = mysqlTable("users", {
   picture: varchar("picture", { length: 255 }), // ✅ added this
   createdAt: timestamp("created_at").defaultNow(),
 });
+
+export const projects = mysqlTable("projects", {
+  id: int("id").autoincrement().primaryKey(),
+  title: varchar("title", { length: 255 }).notNull(),
+  image: varchar("image", { length: 500 }).notNull(),
+  link: varchar("link", { length: 500 }).notNull(),
+});

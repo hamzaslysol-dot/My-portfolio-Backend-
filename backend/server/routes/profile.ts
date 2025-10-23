@@ -1,6 +1,6 @@
 import express from "express";
 import { db } from "../db"; // adjust path if your db connection file is elsewhere
-import { users } from "../drizzle/schema";
+import { users } from "../db/schema";
 import { eq } from "drizzle-orm";
 
 const router = express.Router();

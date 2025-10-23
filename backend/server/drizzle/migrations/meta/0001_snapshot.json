@@ -1,11 +1,11 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "faa0dd25-39a2-461b-baa4-baa6cd2d568a",
-  "prevId": "f5df26d3-d202-47be-9982-424c8bc84b64",
+  "id": "73fb0220-3d61-4e4e-bc49-7ef427b62a61",
+  "prevId": "3effc500-94c3-47a8-b8cc-d83d80d622a1",
   "tables": {
-    "users": {
-      "name": "users",
+    "projects": {
+      "name": "projects",
       "columns": {
         "id": {
           "name": "id",
@@ -14,62 +14,39 @@
           "notNull": true,
           "autoincrement": true
         },
-        "username": {
-          "name": "username",
-          "type": "varchar(100)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "password": {
-          "name": "password",
+        "title": {
+          "name": "title",
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "role": {
-          "name": "role",
-          "type": "varchar(50)",
+        "image": {
+          "name": "image",
+          "type": "varchar(500)",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false,
-          "default": "'admin'"
-        },
-        "picture": {
-          "name": "picture",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": false,
           "autoincrement": false
         },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
+        "link": {
+          "name": "link",
+          "type": "varchar(500)",
           "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false,
-          "default": "(now())"
+          "notNull": true,
+          "autoincrement": false
         }
       },
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {
-        "users_id": {
-          "name": "users_id",
+        "projects_id": {
+          "name": "projects_id",
           "columns": [
             "id"
           ]
         }
       },
-      "uniqueConstraints": {
-        "users_username_unique": {
-          "name": "users_username_unique",
-          "columns": [
-            "username"
-          ]
-        }
-      },
+      "uniqueConstraints": {},
       "checkConstraint": {}
     }
   },

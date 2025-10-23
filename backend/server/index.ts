@@ -33,10 +33,10 @@ app.use("/profiles", express.static(path.join(__dirname, "../profiles")));
 app.use("/api/blogs", blogRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/users", profileRoutes);
-app.use("/api/upload", uploadRouter);
+app.use("/api/projects", uploadRouter);
 
 console.log(
-  "✅ Routes registered: /api/blogs, /api/auth, /api/users, /api/upload"
+  "✅ Routes registered: /api/blogs, /api/auth, /api/users, /api/upload /api/projects"
 );
 
 // -------------------- MySQL connection test (Drizzle ORM) --------------------
