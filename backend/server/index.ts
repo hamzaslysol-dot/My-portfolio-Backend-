@@ -32,9 +32,12 @@ app.use("/profiles", express.static(path.join(__dirname, "../profiles")));
 // Projects images
 app.use(
   "/projects_uploads",
-  express.static(path.join(__dirname, "../projects_uploads"))
+  express.static(path.join(__dirname, "projects_uploads"))
 );
-
+console.log(
+  "Serving static files from:",
+  path.join(__dirname, "../projects_uploads")
+);
 console.log(
   "✅ Static file serving configured for /uploads, /profiles, /projects_uploads"
 );
