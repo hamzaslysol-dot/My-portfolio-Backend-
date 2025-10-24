@@ -5,8 +5,8 @@ import dotenv from "dotenv";
 import { authRouter } from "./routes/auth";
 import blogRouter from "./routes/blog";
 import { poolConnection } from "./db";
-import uploadRouter from "./routes/upload";
 import profileRoutes from "./routes/profile";
+import router from "./routes/projects";
 
 dotenv.config();
 
@@ -33,7 +33,7 @@ app.use("/profiles", express.static(path.join(__dirname, "../profiles")));
 app.use("/api/blogs", blogRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/users", profileRoutes);
-app.use("/api/projects", uploadRouter);
+app.use("/api/projects", router);
 
 console.log(
   "✅ Routes registered: /api/blogs, /api/auth, /api/users, /api/upload /api/projects"

@@ -18,6 +18,6 @@ export const users = mysqlTable("users", {
 export const projects = mysqlTable("projects", {
   id: int("id").autoincrement().primaryKey(),
   title: varchar("title", { length: 255 }).notNull(),
-  image: varchar("image", { length: 500 }).notNull(),
+  image: varchar("image", { length: 500 }),
   link: varchar("link", { length: 500 }).notNull(),
 });

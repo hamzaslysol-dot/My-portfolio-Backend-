@@ -8,68 +8,76 @@ import fs from "fs";
 
 const router = express.Router();
 
-// Multer setup (unchanged)
+// -------------------- Multer config for file uploads --------------------
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const dir = "uploads/projects";
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    cb(null, dir);
+    const uploadPath = path.join(__dirname, "../../projects_uploads");
+    fs.mkdirSync(uploadPath, { recursive: true });
+    cb(null, uploadPath);
   },
   filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname);
-    cb(null, `${Date.now()}${ext}`);
+    const uniqueName = Date.now() + "-" + file.originalname;
+    cb(null, uniqueName);
   },
 });
 const upload = multer({ storage });
 
-// GET all projects
+// -------------------- Get all projects --------------------
 router.get("/", async (req, res) => {
   try {
     const allProjects = await db.select().from(projects);
     res.json(allProjects);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Failed to fetch projects" });
+    console.error("❌ Error fetching projects:", err);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 
 // GET single project by ID
-router.get("/:id", async (req, res) => {
-  try {
-    const id = Number(req.params.id);
-    const project = await db.select().from(projects).where(eq(projects.id, id)); // ✅ use eq() function
-    if (!project.length)
-      return res.status(404).json({ message: "Project not found" });
-    res.json(project[0]);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Failed to fetch project" });
-  }
-});
+// router.get("/:id", async (req, res) => {
+//   try {
+//     const id = Number(req.params.id);
+//     const project = await db.select().from(projects).where(eq(projects.id, id)); // ✅ use eq() function
+//     if (!project.length)
+//       return res.status(404).json({ message: "Project not found" });
+//     res.json(project[0]);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ message: "Failed to fetch project" });
+//   }
+// });
 
-// POST create new project
+// -------------------- Create a new project --------------------
 router.post("/", upload.single("image"), async (req, res) => {
   try {
     const { title, link } = req.body;
-    const image = req.file ? req.file.path.replace(/\\/g, "/") : "";
-    const [newProject] = await db
-      .insert(projects)
-      .values({ title, link, image });
-    res.status(201).json(newProject);
+    if (!title || !link) {
+      return res.status(400).json({ message: "Title and link are required" });
+    }
+
+    const imageUrl = req.file ? `/projects_uploads/${req.file.filename}` : null;
+
+    await db.insert(projects).values({
+      title,
+      link,
+      image: imageUrl,
+    });
+
+    res.status(201).json({ message: "Blog created successfully", imageUrl });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Failed to create project" });
+    console.error("❌ Error creating blog:", err);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 
-// PUT update project
+// -------------------- Update project --------------------
 router.put("/:id", upload.single("image"), async (req, res) => {
   try {
     const id = Number(req.params.id);
     const { title, link } = req.body;
     const updateData: any = { title, link };
 
-    if (req.file) updateData.image = req.file.path.replace(/\\/g, "/");
+    if (req.file) updateData.image = `/projects_uploads/${req.file.filename}`;
 
     const [updatedProject] = await db
       .update(projects)
