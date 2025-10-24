@@ -11,7 +11,7 @@ const router = express.Router();
 // -------------------- Multer config for file uploads --------------------
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const uploadPath = path.join(__dirname, "../../projects_uploads");
+    const uploadPath = path.join(__dirname, "../projects_uploads");
     fs.mkdirSync(uploadPath, { recursive: true });
     cb(null, uploadPath);
   },

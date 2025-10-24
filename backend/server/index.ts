@@ -29,6 +29,16 @@ app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 // Profile images
 app.use("/profiles", express.static(path.join(__dirname, "../profiles")));
 
+// Projects images
+app.use(
+  "/projects_uploads",
+  express.static(path.join(__dirname, "../projects_uploads"))
+);
+
+console.log(
+  "✅ Static file serving configured for /uploads, /profiles, /projects_uploads"
+);
+
 // -------------------- Routes --------------------
 app.use("/api/blogs", blogRouter);
 app.use("/api/auth", authRouter);
